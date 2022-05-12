@@ -484,7 +484,10 @@ def add_participant_team_to_challenge(
         # user_email.
         for user in participant_team.get_all_participants():
             if not is_user_profile_filled(user):
-                message = "Please complete your EvalAI profile to participate in the challenge."
+                message = (
+                    "Sorry, a team member(s) have not completed their profile. Please ask them to complete "
+                    "their profiles and try again later."
+                )
                 response_data = {"error": message}
                 return Response(
                     response_data, status=status.HTTP_406_NOT_ACCEPTABLE

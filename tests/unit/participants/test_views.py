@@ -50,7 +50,6 @@ class BaseAPITestClass(APITestCase):
 
 
 class GetParticipantTeamTest(BaseAPITestClass):
-
     url = reverse_lazy("participants:get_participant_team_list")
 
     def setUp(self):
@@ -121,7 +120,6 @@ class GetParticipantTeamTest(BaseAPITestClass):
 
 
 class CreateParticipantTeamTest(BaseAPITestClass):
-
     url = reverse_lazy("participants:get_participant_team_list")
 
     def setUp(self):
@@ -135,7 +133,6 @@ class CreateParticipantTeamTest(BaseAPITestClass):
     def test_create_participant_team_with_team_name_same_as_with_existing_team(
         self,
     ):
-
         expected = {
             "team_name": [
                 "participant team with this team name already exists."
@@ -606,6 +603,240 @@ class InviteParticipantToTeamTest(BaseAPITestClass):
         self.assertEqual(response.data, expected)
         self.assertEqual(response.status_code, status.HTTP_406_NOT_ACCEPTABLE)
 
+    def test_invite_participant_to_team_when_challenge_requires_complete_profile_and_invited_user_is_not_complete(
+        self,
+    ):
+        """
+        NOTE
+        user: host user
+        user1: participant 1
+        user2: participant 2
+        """
+        self.user2 = User.objects.create(
+            username="user2",
+            email="user2@platform.com",
+            password="user2_password",
+        )
+
+        EmailAddress.objects.create(
+            user=self.user2,
+            email="user2@platform.com",
+            primary=True,
+            verified=True,
+        )
+
+        list(Profile.objects.filter(user=self.user2))[
+            0
+        ].contact_number = "5551237890"
+        list(Profile.objects.filter(user=self.user2))[
+            0
+        ].affiliation = "X University"
+        list(Profile.objects.filter(user=self.user2))[
+            0
+        ].github_url = "https://www.github.com/someuser5"
+        list(Profile.objects.filter(user=self.user2))[
+            0
+        ].google_scholar_url = "https://scholar.google.com/someruser5"
+        list(Profile.objects.filter(user=self.user2))[
+            0
+        ].linkedin_url = "https://www.linkedin.com/someuser5"
+
+        self.user3 = User.objects.create(
+            username="user3",
+            email="user3@platform.com",
+            password="user3_password",
+        )
+
+        EmailAddress.objects.create(
+            user=self.user3,
+            email="user3@platform.com",
+            primary=True,
+            verified=True,
+        )
+
+        self.participant_team2 = ParticipantTeam.objects.create(
+            team_name="Participant Team created by user 2",
+            created_by=self.user2,
+        )
+
+        self.participant_team3 = ParticipantTeam.objects.create(
+            team_name="Participant Team created by user 3",
+            created_by=self.user3,
+        )
+
+        self.participant2 = Participant.objects.create(
+            user=self.user2,
+            status=Participant.ACCEPTED,
+            team=self.participant_team2,
+        )
+
+        self.participant3 = Participant.objects.create(
+            user=self.user3,
+            status=Participant.ACCEPTED,
+            team=self.participant_team3,
+        )
+
+        self.challenge_host_team = ChallengeHostTeam.objects.create(
+            team_name="Test Challenge Host Team", created_by=self.user
+        )
+
+        self.challenge = Challenge.objects.create(
+            title="Test Challenge",
+            short_description="Short description for test challenge",
+            description="Description for test challenge",
+            terms_and_conditions="Terms and conditions for test challenge",
+            submission_guidelines="Submission guidelines for test challenge",
+            creator=self.challenge_host_team,
+            published=False,
+            enable_forum=True,
+            leaderboard_description=None,
+            anonymous_leaderboard=False,
+            start_date=timezone.now() - timedelta(days=2),
+            end_date=timezone.now() + timedelta(days=1),
+            is_users_profile_complete=True,
+        )
+
+        self.client.force_authenticate(user=self.user2)
+
+        self.challenge.participant_teams.add(self.participant_team2)
+
+        self.data = {"email": self.user3.email}
+        self.url = reverse_lazy(
+            "participants:invite_participant_to_team",
+            kwargs={"pk": self.participant_team2.pk},
+        )
+
+        expected = {
+            "error": "Sorry, the invited user does not have a completed profile."
+        }
+        response = self.client.post(self.url, self.data)
+        self.assertEqual(response.data, expected)
+        self.assertEqual(response.status_code, status.HTTP_406_NOT_ACCEPTABLE)
+
+    def test_invite_participant_to_team_when_challenge_requires_complete_profile_and_invited_user_is_complete(
+        self,
+    ):
+        """
+        NOTE
+        user: host user
+        user1: participant 1
+        user2: participant 2
+        """
+        self.user2 = User.objects.create(
+            username="user2",
+            email="user2@platform.com",
+            password="user2_password",
+        )
+
+        EmailAddress.objects.create(
+            user=self.user2,
+            email="user2@platform.com",
+            primary=True,
+            verified=True,
+        )
+
+        list(Profile.objects.filter(user=self.user2))[
+            0
+        ].contact_number = "5551237890"
+        list(Profile.objects.filter(user=self.user2))[
+            0
+        ].affiliation = "X University"
+        list(Profile.objects.filter(user=self.user2))[
+            0
+        ].github_url = "https://www.github.com/someuser5"
+        list(Profile.objects.filter(user=self.user2))[
+            0
+        ].google_scholar_url = "https://scholar.google.com/someruser5"
+        list(Profile.objects.filter(user=self.user2))[
+            0
+        ].linkedin_url = "https://www.linkedin.com/someuser5"
+
+        self.user3 = User.objects.create(
+            username="user3",
+            email="user3@platform.com",
+            password="user3_password",
+        )
+
+        EmailAddress.objects.create(
+            user=self.user3,
+            email="user3@platform.com",
+            primary=True,
+            verified=True,
+        )
+
+        list(Profile.objects.filter(user=self.user3))[
+            0
+        ].contact_number = "5551237890"
+        list(Profile.objects.filter(user=self.user3))[
+            0
+        ].affiliation = "X University"
+        list(Profile.objects.filter(user=self.user3))[
+            0
+        ].github_url = "https://www.github.com/someuser5"
+        list(Profile.objects.filter(user=self.user3))[
+            0
+        ].google_scholar_url = "https://scholar.google.com/someruser5"
+        list(Profile.objects.filter(user=self.user3))[
+            0
+        ].linkedin_url = "https://www.linkedin.com/someuser5"
+
+        self.participant_team2 = ParticipantTeam.objects.create(
+            team_name="Participant Team created by user 2",
+            created_by=self.user2,
+        )
+
+        self.participant_team3 = ParticipantTeam.objects.create(
+            team_name="Participant Team created by user 3",
+            created_by=self.user3,
+        )
+
+        self.participant2 = Participant.objects.create(
+            user=self.user2,
+            status=Participant.ACCEPTED,
+            team=self.participant_team2,
+        )
+
+        self.participant3 = Participant.objects.create(
+            user=self.user3,
+            status=Participant.ACCEPTED,
+            team=self.participant_team3,
+        )
+
+        self.challenge_host_team = ChallengeHostTeam.objects.create(
+            team_name="Test Challenge Host Team", created_by=self.user
+        )
+
+        self.challenge = Challenge.objects.create(
+            title="Test Challenge",
+            short_description="Short description for test challenge",
+            description="Description for test challenge",
+            terms_and_conditions="Terms and conditions for test challenge",
+            submission_guidelines="Submission guidelines for test challenge",
+            creator=self.challenge_host_team,
+            published=False,
+            enable_forum=True,
+            leaderboard_description=None,
+            anonymous_leaderboard=False,
+            start_date=timezone.now() - timedelta(days=2),
+            end_date=timezone.now() + timedelta(days=1),
+            is_users_profile_complete=True,
+        )
+
+        self.client.force_authenticate(user=self.user2)
+
+        self.challenge.participant_teams.add(self.participant_team2)
+
+        self.data = {"email": self.user3.email}
+        self.url = reverse_lazy(
+            "participants:invite_participant_to_team",
+            kwargs={"pk": self.participant_team2.pk},
+        )
+
+        expected = {"message": "User has been successfully added to the team!"}
+        response = self.client.post(self.url, self.data)
+        self.assertEqual(response.data, expected)
+        self.assertEqual(response.status_code, status.HTTP_202_ACCEPTED)
+
 
 class DeleteParticipantFromTeamTest(BaseAPITestClass):
     def setUp(self):
@@ -675,7 +906,8 @@ class DeleteParticipantFromTeamTest(BaseAPITestClass):
         )
 
         expected = {
-            "error": "You are not allowed to remove yourself since you are admin. Please delete the team if you want to do so!"  # noqa: ignore=E501
+            "error": "You are not allowed to remove yourself since you are admin. Please delete the team if you want to do so!"
+            # noqa: ignore=E501
         }
 
         response = self.client.delete(self.url, {})
@@ -808,7 +1040,6 @@ class GetTeamsAndCorrespondingChallengesForAParticipant(BaseAPITestClass):
         self.time = timezone.now()
 
     def test_get_teams_and_corresponding_challenges_for_a_participant(self):
-
         self.challenge1.participant_teams.add(self.participant_team)
         self.challenge1.save()
 
@@ -940,7 +1171,6 @@ class GetTeamsAndCorrespondingChallengesForAParticipant(BaseAPITestClass):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_when_participant_team_hasnot_participated_in_any_challenge(self):
-
         expected = {
             "challenge_participant_team_list": [
                 {
@@ -967,7 +1197,6 @@ class GetTeamsAndCorrespondingChallengesForAParticipant(BaseAPITestClass):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_when_there_is_no_participant_team_of_user(self):
-
         self.participant_team.delete()
 
         expected = {
