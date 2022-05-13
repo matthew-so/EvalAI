@@ -988,7 +988,7 @@ class MapChallengeAndParticipantTeam(BaseAPITestClass):
         response = self.client.post(self.url, {})
         message = (
             "Sorry, a team member(s) have not completed their profile. Please ask them to complete their "
-            "profiles and try again later. "
+            "profiles and try again later."
         )
         expected = {"error": message}
 
@@ -1032,7 +1032,7 @@ class MapChallengeAndParticipantTeam(BaseAPITestClass):
         response = self.client.post(self.url, {})
         message = (
             "Sorry, a team member(s) have not completed their profile. Please ask them to complete their "
-            "profiles and try again later. "
+            "profiles and try again later."
         )
         expected = {"error": message}
 

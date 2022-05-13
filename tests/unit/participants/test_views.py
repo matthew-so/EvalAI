@@ -722,6 +722,7 @@ class InviteParticipantToTeamTest(BaseAPITestClass):
         user1: participant 1
         user2: participant 2
         """
+
         self.user2 = User.objects.create(
             username="user2",
             email="user2@platform.com",
@@ -764,42 +765,23 @@ class InviteParticipantToTeamTest(BaseAPITestClass):
             verified=True,
         )
 
-        list(Profile.objects.filter(user=self.user3))[
-            0
-        ].contact_number = "5551237890"
-        list(Profile.objects.filter(user=self.user3))[
-            0
-        ].affiliation = "X University"
-        list(Profile.objects.filter(user=self.user3))[
-            0
-        ].github_url = "https://www.github.com/someuser5"
-        list(Profile.objects.filter(user=self.user3))[
-            0
-        ].google_scholar_url = "https://scholar.google.com/someruser5"
-        list(Profile.objects.filter(user=self.user3))[
-            0
-        ].linkedin_url = "https://www.linkedin.com/someuser5"
+        Profile.objects.filter(user=self.user3).update(
+            contact_number="5551237890",
+            affiliation="X University",
+            github_url="https://www.github.com/someuser5",
+            google_scholar_url="https://scholar.google.com/someruser5",
+            linkedin_url="https://www.linkedin.com/someuser5",
+        )
 
         self.participant_team2 = ParticipantTeam.objects.create(
             team_name="Participant Team created by user 2",
             created_by=self.user2,
         )
 
-        self.participant_team3 = ParticipantTeam.objects.create(
-            team_name="Participant Team created by user 3",
-            created_by=self.user3,
-        )
-
         self.participant2 = Participant.objects.create(
             user=self.user2,
             status=Participant.ACCEPTED,
             team=self.participant_team2,
-        )
-
-        self.participant3 = Participant.objects.create(
-            user=self.user3,
-            status=Participant.ACCEPTED,
-            team=self.participant_team3,
         )
 
         self.challenge_host_team = ChallengeHostTeam.objects.create(

@@ -291,14 +291,13 @@ def invite_participant_to_team(request, pk):
                 )
 
             if challenge.is_users_profile_complete:
-                for user in participant_team.get_all_participants():
-                    if not is_user_profile_filled(user):
-                        message = "Sorry, the invited user does not have a completed profile."
-                        response_data = {"error": message}
-                        return Response(
-                            response_data,
-                            status=status.HTTP_406_NOT_ACCEPTABLE,
-                        )
+                if not is_user_profile_filled(user):
+                    message = "Sorry, the invited user does not have a completed profile."
+                    response_data = {"error": message}
+                    return Response(
+                        response_data,
+                        status=status.HTTP_406_NOT_ACCEPTABLE,
+                    )
 
     serializer = InviteParticipantToTeamSerializer(
         data=request.data,

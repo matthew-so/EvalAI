@@ -409,18 +409,20 @@ def is_user_profile_filled(user):
         # This shouldn't happen, it means the user doesn't exist
         return False
     else:
-        user_profile = users_list[0]
-        if (
-            not user_profile.contact_number
-            or user_profile.affiliation == ""
-            or not user_profile.github_url
-            or user_profile.github_url == ""
-            or not user_profile.google_scholar_url
-            or user_profile.google_scholar_url == ""
-            or not user_profile.linkedin_url
-            or user_profile.linkedin_url == ""
-        ):
-            return False
+        for user_profile in users_list:
+            if (
+                not user_profile.contact_number
+                or user_profile.contact_number == ""
+                or not user_profile.affiliation
+                or user_profile.affiliation == ""
+                or not user_profile.github_url
+                or user_profile.github_url == ""
+                or not user_profile.google_scholar_url
+                or user_profile.google_scholar_url == ""
+                or not user_profile.linkedin_url
+                or user_profile.linkedin_url == ""
+            ):
+                return False
         else:
             return True
 
