@@ -50,6 +50,7 @@ class BaseAPITestClass(APITestCase):
 
 
 class GetParticipantTeamTest(BaseAPITestClass):
+    
     url = reverse_lazy("participants:get_participant_team_list")
 
     def setUp(self):
@@ -120,6 +121,7 @@ class GetParticipantTeamTest(BaseAPITestClass):
 
 
 class CreateParticipantTeamTest(BaseAPITestClass):
+
     url = reverse_lazy("participants:get_participant_team_list")
 
     def setUp(self):
@@ -133,6 +135,7 @@ class CreateParticipantTeamTest(BaseAPITestClass):
     def test_create_participant_team_with_team_name_same_as_with_existing_team(
         self,
     ):
+
         expected = {
             "team_name": [
                 "participant team with this team name already exists."
@@ -889,7 +892,6 @@ class DeleteParticipantFromTeamTest(BaseAPITestClass):
 
         expected = {
             "error": "You are not allowed to remove yourself since you are admin. Please delete the team if you want to do so!"
-            # noqa: ignore=E501
         }
 
         response = self.client.delete(self.url, {})
@@ -1022,6 +1024,7 @@ class GetTeamsAndCorrespondingChallengesForAParticipant(BaseAPITestClass):
         self.time = timezone.now()
 
     def test_get_teams_and_corresponding_challenges_for_a_participant(self):
+        
         self.challenge1.participant_teams.add(self.participant_team)
         self.challenge1.save()
 
@@ -1153,6 +1156,7 @@ class GetTeamsAndCorrespondingChallengesForAParticipant(BaseAPITestClass):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_when_participant_team_hasnot_participated_in_any_challenge(self):
+        
         expected = {
             "challenge_participant_team_list": [
                 {
@@ -1179,6 +1183,7 @@ class GetTeamsAndCorrespondingChallengesForAParticipant(BaseAPITestClass):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_when_there_is_no_participant_team_of_user(self):
+        
         self.participant_team.delete()
 
         expected = {
