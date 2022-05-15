@@ -190,12 +190,11 @@ class TestChallengeUrls(BaseAPITestClass):
         )
 
         url = reverse_lazy(
-            "challenges:get_all_challenges",
-            kwargs={
+            "challenges:get_all_challenges", kwargs={
                 "challenge_time": "PAST",
                 "challenge_approved": "APPROVED",
                 "challenge_published": "PUBLIC",
-            },
+            }
         )
         self.assertEqual(url, "/api/challenges/challenge/PAST/APPROVED/PUBLIC")
 

@@ -26,7 +26,9 @@ from .models import (
     ParticipantTeam,
 )
 
-from accounts.models import Profile
+from accounts.models import (
+    Profile
+)
 
 logger = logging.getLogger(__name__)
 
