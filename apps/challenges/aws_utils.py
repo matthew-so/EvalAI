@@ -693,7 +693,6 @@ def restart_workers(queryset):
     for challenge in queryset:
         if (
             challenge.is_docker_based
-            and not challenge.is_static_dataset_code_upload
         ):
             response = "Sorry. This feature is not available for code upload/docker based challenges."
             failures.append(
@@ -862,7 +861,7 @@ def create_eks_nodegroup(challenge, cluster_name):
         challenge_obj = obj.object
     environment_suffix = "{}-{}".format(challenge_obj.pk, settings.ENVIRONMENT)
     nodegroup_name = "{}-{}-nodegroup".format(
-        challenge_obj.title.replace(" ", "-"), environment_suffix
+        challenge_obj.title.replace(" ", "-")[:20], environment_suffix
     )
     challenge_aws_keys = get_aws_credentials_for_challenge(challenge_obj.pk)
     client = get_boto3_client("eks", challenge_aws_keys)
