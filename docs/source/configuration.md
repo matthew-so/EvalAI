@@ -30,6 +30,8 @@ Following fields are required (and can be customized) in the [`challenge_config.
 
 - **blocked_emails_domains**: A list of domains not allowed to participate in the challenge. Leave blank if everyone is allowed to participate. (e.g. `["domain1.com", "domain2.org", "domain3.in"]` Participants with these email domains will not be allowed to participate.)
 
+- **banned_email_ids**: A list of email addresses whose teams are banned from competing in the challenge. Leave blank if everyone is allowed to participate. (e.g. teams containing at least one participant with one of these emails would not be allowed to participate: `["banneduser1@banned.edu", "banned_user2@banned.edu"]`)
+
 - **leaderboard**:
   A leaderboard for a challenge on EvalAI consists of following subfields:
 
@@ -56,6 +58,74 @@ Following fields are required (and can be customized) in the [`challenge_config.
   The above leaderboard schema will look something like this on leaderboard UI:
 
   ![](_static/img/leaderboard.png "Random Number Generator Challenge - Leaderboard")
+
+- **queue**:
+  SQS queue name (blank by default).
+
+- **aws_account_id**, **aws_access_key_id**, **aws_secret_access_key**, **aws_region**:
+  AWS authentication information to be used by evaluation scripts.
+
+- **aws_region**:
+  AWS region where evaluations will be run. `us-east-1` by default.
+
+- **task_def_arn**, **vpc_cidr**, **subnet_1_cidr**, **subnet_2_cidr**:
+  The task definition ARN and VPC and subnet CIDRs for code upload challenge.
+
+The following fields have default values but can be updated if needed.
+
+- **is_docker_based**:
+  True/False (specify whether challenge uses Docker to host challenge scripts. Default is `True`)
+
+- **is_static_dataset_code_upload**:
+  True/False (specify whether challenge is a static code upload challenge. Default is `False`)
+
+- **max_docker_image_size**:
+  Maximum image size of Docker containers used to host challenge (in bytes, default is 40 GiB)
+
+- **max_concurrent_submission_evaluation**:
+  Maximum number of submissions that will be run concurrently by evaluation setup (default 100000)
+
+- **use_host_credentials**:
+  True/False (specify whether challenge will use the host's AWS credentials to run evaluations, default is `False`)
+
+- **cli_version**:
+  The CLI version used by the challenge. `evalai-cli version` by default.
+
+- **workers**:
+  True/False (specify how many active workers the challenge's Fargate will use at a time)
+
+- **slack_webhook_url**:
+  (optional) The Slack webhook that can be used to notify when a submission has been evaluated.
+
+- **github_repository**:
+  The GitHub repository where the challenge's source code can be found. Format: account_name/repository_name
+
+- **worker_cpu_cores**:
+  The amount of CPU time (in 1/1024's of a vCPU core) that the challenge will require on AWS. Maximum of 1 vCPU core (1024) is permitted. Default is 512, or 0.5 vCPUs. See [the AWS docs](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/AWS_Fargate.html) for the list of valid CPU and memory values.
+
+- **worker_memory**:
+  The amount of memory (in MiB) that each challenge worker will require on AWS. Default is 1024 MiB. Maximum of 2 GB is permitted. See [the AWS docs](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/AWS_Fargate.html) for the list of valid CPU and memory values.
+
+- **inform_hosts**:
+  True/False (specifies whether host will receive messages whenever workers are created, updated, or deleted. Default is `True`).
+
+- **worker_instance_type**:
+  Evaluation instance config for code upload challenge. Default is `g4dn.xlarge`.
+
+- **worker_ami_type**:
+  Evaluation AMI config for code upload challenge. Default is `AL2_x86_64_GPU`.
+
+- **worker_disk_size**:
+  Evaluation disk size config for code upload challenge. Default is 100 GB.
+
+- **max_worker_instance**, **min_worker_instance**, **desired_worker_instances**:
+  Maximum, minimum, and desired number of challenge worker instances. Default is max: 10, min: 1, and desired: 1.
+
+- **cpu_only_jobs**:
+  True/False (specifies whether jobs will run on the CPU only. Default is `False`).
+
+- **job_cpu_cores**, **job_memory**:
+  The number of vCPU for a code upload submission kubernetes job. Default value is 2 vCPUs and 8 GiB.
 
 * **challenge_phases**:
 
