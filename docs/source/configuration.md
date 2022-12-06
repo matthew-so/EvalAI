@@ -20,6 +20,8 @@ Following fields are required (and can be customized) in the [`challenge_config.
 
 - **remote_evaluation**: True/False (specify whether evaluation will happen on a remote machine or not. Default is `False`)
 
+- **is_docker_based**: True/False (specify whether challenge uses Docker to host challenge scripts. Default is `True`)
+
 - **start_date**: Start DateTime of the challenge (Format: YYYY-MM-DD HH:MM:SS, e.g. 2017-07-07 10:10:10) in `UTC` time zone
 
 - **end_date**: End DateTime of the challenge (Format: YYYY-MM-DD HH:MM:SS, e.g. 2017-07-07 10:10:10) in `UTC` time zone
@@ -72,9 +74,6 @@ Following fields are required (and can be customized) in the [`challenge_config.
   The task definition ARN and VPC and subnet CIDRs for code upload challenge.
 
 The following fields have default values but can be updated if needed.
-
-- **is_docker_based**:
-  True/False (specify whether challenge uses Docker to host challenge scripts. Default is `True`)
 
 - **is_static_dataset_code_upload**:
   True/False (specify whether challenge is a static code upload challenge. Default is `False`)
