@@ -8,7 +8,7 @@ Following fields are required (and can be customized) in the [`challenge_config.
 
 - **description**: Long description of the challenge (use a relative path for the HTML file, e.g. `challenge_details/description.html`)
 
-- **evaluation_criteria**: Evaluation criteria and details of the challenge (use a relative path for the HTML file, e.g. `challenge_details/evaluation.html`)
+- **evaluation_details**: Evaluation criteria and details of the challenge (use a relative path for the HTML file, e.g. `challenge_details/evaluation.html`)
 
 - **terms_and_conditions**: Terms and conditions of the challenge (use a relative path for the HTML file, e.g. `challenge_details/tnc.html`)
 
@@ -61,34 +61,46 @@ Following fields are required (and can be customized) in the [`challenge_config.
 
   ![](_static/img/leaderboard.png "Random Number Generator Challenge - Leaderboard")
 
-- **queue**:
-  SQS queue name (blank by default).
-
 - **aws_account_id**, **aws_access_key_id**, **aws_secret_access_key**, **aws_region**:
   AWS authentication information to be used by evaluation scripts.
 
 - **aws_region**:
   AWS region where evaluations will be run. `us-east-1` by default.
 
-- **task_def_arn**, **vpc_cidr**, **subnet_1_cidr**, **subnet_2_cidr**:
-  The task definition ARN and VPC and subnet CIDRs for code upload challenge.
+The following fields have default values but can be optionally updated if needed.
 
-The following fields have default values but can be updated if needed.
+- **submission_time_limit**:
+  Maximum time limit for submission evaluation (default is 24 hours)
+
+- **is_registration_open**:
+  True/False (specify whether registration will automatically open when the challenge is created. Default is `True`)
+
+- **enable_forum**:
+  True/False (specify whether forum is enabled for this challenge. Default is `True`)
+
+- **forum_url**:
+  Forum URL for challenge (blank by default)
+
+- **leaderboard_description**:
+  Description for challenge leaderboard (blank by default)
+
+- **anonymous_leaderboard**:
+  True/False (specify whether leaderboard should be anonymous. Default is `False`)
+
+- **is_disabled**:
+  True/False (specify whether challenge is disabled. Default is `False`)
 
 - **is_static_dataset_code_upload**:
   True/False (specify whether challenge is a static code upload challenge. Default is `False`)
 
 - **max_docker_image_size**:
-  Maximum image size of Docker containers used to host challenge (in bytes, default is 40 GiB)
+  Maximum image size of Docker containers used to host challenge (in bytes. Default is 40 GiB)
 
 - **max_concurrent_submission_evaluation**:
   Maximum number of submissions that will be run concurrently by evaluation setup (default 100000)
 
 - **use_host_credentials**:
-  True/False (specify whether challenge will use the host's AWS credentials to run evaluations, default is `False`)
-
-- **cli_version**:
-  The CLI version used by the challenge. `evalai-cli version` by default.
+  True/False (specify whether challenge will use the host's AWS credentials to run evaluations. Default is `False`)
 
 - **workers**:
   True/False (specify how many active workers the challenge's Fargate will use at a time)
@@ -97,16 +109,14 @@ The following fields have default values but can be updated if needed.
   (optional) The Slack webhook that can be used to notify when a submission has been evaluated.
 
 - **github_repository**:
-  The GitHub repository where the challenge's source code can be found. Format: account_name/repository_name
+  The GitHub repository where the challenge's source code can be found. Format: `account_name/repository_name`
 
-- **worker_cpu_cores**:
-  The amount of CPU time (in 1/1024's of a vCPU core) that the challenge will require on AWS. Maximum of 1 vCPU core (1024) is permitted. Default is 512, or 0.5 vCPUs. See [the AWS docs](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/AWS_Fargate.html) for the list of valid CPU and memory values.
-
-- **worker_memory**:
-  The amount of memory (in MiB) that each challenge worker will require on AWS. Default is 1024 MiB. Maximum of 2 GB is permitted. See [the AWS docs](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/AWS_Fargate.html) for the list of valid CPU and memory values.
+- **worker_cpu_cores**, **worker_memory**:
+  The amount of CPUs (in 1/1024's of a vCPU core) and memory (in MiB) that the challenge will require on AWS ECS, respectively. Maximum of 1 vCPU core (1024) and 2048 MiB (2048) is permitted. 
+Default is 512, or 0.5 vCPUs, and 1024, or 1024 MiB, respectively. See [the AWS docs](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/AWS_Fargate.html) for the list of valid CPU and memory values.
 
 - **inform_hosts**:
-  True/False (specifies whether host will receive messages whenever workers are created, updated, or deleted. Default is `True`).
+  True/False (specify whether host will receive messages whenever workers are created, updated, or deleted. Default is `True`).
 
 - **worker_instance_type**:
   Evaluation instance config for code upload challenge. Default is `g4dn.xlarge`.
@@ -118,10 +128,10 @@ The following fields have default values but can be updated if needed.
   Evaluation disk size config for code upload challenge. Default is 100 GB.
 
 - **max_worker_instance**, **min_worker_instance**, **desired_worker_instances**:
-  Maximum, minimum, and desired number of challenge worker instances. Default is max: 10, min: 1, and desired: 1.
+  Maximum, minimum, and desired number of challenge worker instances, respectively. Default is max: 10, min: 1, and desired: 1.
 
 - **cpu_only_jobs**:
-  True/False (specifies whether jobs will run on the CPU only. Default is `False`).
+  True/False (specify whether jobs will run on the CPU only. Default is `False`)
 
 - **job_cpu_cores**, **job_memory**:
   The number of vCPU for a code upload submission kubernetes job. Default value is 2 vCPUs and 8 GiB.
